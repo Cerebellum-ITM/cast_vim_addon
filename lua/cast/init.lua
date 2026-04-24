@@ -9,7 +9,7 @@ local state = {
 local config = {
   cmd = "cast",
   args = {},
-  keymap = "<C-\\>",
+  keymap = "<M-\\>",
   border = "rounded",
   width = 0.8,
   height = 0.8,
@@ -89,7 +89,6 @@ local function open_window()
     end,
   })
 
-  vim.keymap.set("t", "<C-\\><C-n>", [[<C-\><C-n>]], { buffer = state.buf })
   vim.keymap.set("n", "q", function() M.hide() end, { buffer = state.buf, nowait = true, silent = true })
 
   if config.close_key and config.close_key ~= "" then
