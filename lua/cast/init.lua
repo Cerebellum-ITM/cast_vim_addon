@@ -18,6 +18,7 @@ local config = {
   winblend = 0,
   start_insert = true,
   close_on_exit = false,
+  close_key = "<C-q>",
 }
 
 local function buf_valid()
@@ -97,6 +98,11 @@ local function open_window()
   vim.keymap.set("t", "<C-\\><C-n>", [[<C-\><C-n>]], { buffer = state.buf })
   vim.keymap.set("n", "q", function() M.hide() end, { buffer = state.buf, nowait = true, silent = true })
 
+  if config.close_key and config.close_key ~= "" then
+    vim.keymap.set({ "t", "n" }, config.close_key, function() M.hide() end,
+      { buffer = state.buf, silent = true, desc = "Cast: hide window" })
+  end
+
   if config.start_insert then
     vim.cmd.startinsert()
   end
@@ -154,7 +160,8 @@ function M.setup(opts)
   vim.api.nvim_create_user_command("CastKill", M.kill, {})
 
   if config.keymap and config.keymap ~= "" then
-    vim.keymap.set("n", config.keymap, M.toggle, { desc = "Cast: toggle floating CLI", silent = true })
+    vim.keymap.set({ "n", "t" }, config.keymap, function() M.toggle() end,
+      { desc = "Cast: toggle floating CLI", silent = true })
   end
 end
 
