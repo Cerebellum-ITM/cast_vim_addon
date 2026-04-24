@@ -9,7 +9,7 @@ local state = {
 local config = {
   cmd = "cast",
   args = {},
-  keymap = "<leader>ct",
+  keymap = "<C-\\>",
   border = "rounded",
   width = 0.8,
   height = 0.8,
@@ -17,7 +17,6 @@ local config = {
   title_pos = "center",
   winblend = 0,
   start_insert = true,
-  close_on_exit = false,
   close_key = "<C-q>",
 }
 
@@ -62,22 +61,17 @@ local function open_window()
       table.insert(full_cmd, a)
     end
     state.job = vim.fn.termopen(full_cmd, {
-      on_exit = function(_, code, _)
+      on_exit = function(_, _, _)
         state.job = nil
-        if config.close_on_exit then
+        vim.schedule(function()
           if win_valid() then
-            vim.api.nvim_win_close(state.win, true)
+            pcall(vim.api.nvim_win_close, state.win, true)
           end
           if buf_valid() then
-            vim.api.nvim_buf_delete(state.buf, { force = true })
+            pcall(vim.api.nvim_buf_delete, state.buf, { force = true })
           end
-          state.buf = nil
-          state.win = nil
-        else
-          vim.schedule(function()
-            vim.notify(("[cast] process exited (code %d)"):format(code), vim.log.levels.INFO)
-          end)
-        end
+          state.buf, state.win = nil, nil
+        end)
       end,
     })
     if state.job <= 0 then
