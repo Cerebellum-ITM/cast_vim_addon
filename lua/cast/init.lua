@@ -9,7 +9,8 @@ local state = {
 local config = {
   cmd = "cast",
   args = {},
-  keymap = "<M-\\>",
+  keymap = "<C-q>",
+  keymap_modes = { "n", "t" },
   border = "rounded",
   width = 0.8,
   height = 0.8,
@@ -17,7 +18,7 @@ local config = {
   title_pos = "center",
   winblend = 0,
   start_insert = true,
-  close_key = "<C-q>",
+  close_key = nil,
 }
 
 local function buf_valid()
@@ -153,7 +154,7 @@ function M.setup(opts)
   vim.api.nvim_create_user_command("CastKill", M.kill, {})
 
   if config.keymap and config.keymap ~= "" then
-    vim.keymap.set({ "n", "t" }, config.keymap, function() M.toggle() end,
+    vim.keymap.set(config.keymap_modes or { "n" }, config.keymap, function() M.toggle() end,
       { desc = "Cast: toggle floating CLI", silent = true })
   end
 end
